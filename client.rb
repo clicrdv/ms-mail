@@ -22,8 +22,8 @@ def main
         "molo" => "molo@yopmail.com"
       }
     )
-  ).message
-  p mailstatus
+  )
+  puts "Mail sent : #{mailstatus.status}, id : #{mailstatus.uniqueId}"
 end
 
 main

@@ -4,6 +4,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/google/uuid"
 	context "golang.org/x/net/context"
 
 	"google.golang.org/grpc"
@@ -17,24 +18,20 @@ type server struct{}
 func (s *server) SendMail(ctxt context.Context, mailToSend *pb.ClicRdvMail) (*pb.SendMailStatus, error) {
 	log.Print("Received GRPC Call")
 	log.Printf("Received arguments : %s, %s", mailToSend.GetFromEmail(), mailToSend.GetHtmlContent())
-	targetMailMap := map[string]string{
-		"mikrob - perso": "mikrob@yopmail.com",
-		"mikrob - pro":   "mikrob+3@yopmail.com",
-	}
-
 	sm := mail.SendgridMail{
-		FromName:     "No Reply ClicRDV",
-		FromEmail:    "noreply@clicrdv.com",
-		ReplyToName:  "No Reply ClicRDV",
-		ReplyToEmail: "noreply@clicrdv.com",
-		HtmlContent:  "<html><body><b>This is bold html</b></body></html>",
-		TextContent:  "This is text content",
-		Subject:      "Mail From MS Mail",
-		ToMap:        targetMailMap,
+		FromName:     mailToSend.GetFromName(),
+		FromEmail:    mailToSend.GetFromEmail(),
+		ReplyToName:  mailToSend.GetReplyToName(),
+		ReplyToEmail: mailToSend.GetReplyToEmail(),
+		HtmlContent:  mailToSend.GetHtmlContent(),
+		TextContent:  mailToSend.GetTextContent(),
+		Subject:      mailToSend.GetSubject(),
+		ToMap:        mailToSend.GetToMap(),
+		UUID:         uuid.New().String(),
 	}
-	sm.SendMail()
-	log.Print("Finished grpc processing")
-	return nil, nil
+	status, uuid := sm.SendMail()
+	log.Print("Finished grpc processing of mail with uuid:", sm.UUID)
+	return &pb.SendMailStatus{Status: status, UniqueId: uuid}, nil
 }
 
 func main() {

@@ -3,8 +3,8 @@ package mail
 import (
 	"fmt"
 	"os"
+	"strconv"
 
-	"github.com/google/uuid"
 	sendgrid "github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 )
@@ -18,6 +18,7 @@ type SendgridMail struct {
 	Subject      string
 	HtmlContent  string
 	TextContent  string
+	UUID         string
 }
 
 func (sm *SendgridMail) NewMail(subject string, fromName string, fromEmail string, toMap map[string]string, htmlContent string, textContent string) {
@@ -29,7 +30,7 @@ func (sm *SendgridMail) NewMail(subject string, fromName string, fromEmail strin
 	sm.Subject = subject
 }
 
-func (sm *SendgridMail) SendMail() {
+func (sm *SendgridMail) SendMail() (string, string) {
 	request := sendgrid.GetRequest(os.Getenv("SENDGRID_API_KEY"), "/v3/mail/send", "https://api.sendgrid.com")
 	request.Method = "POST"
 	var Body = mail.GetRequestBody(sm.BuildMail())
@@ -42,6 +43,7 @@ func (sm *SendgridMail) SendMail() {
 		fmt.Println(response.Body)
 		fmt.Println(response.Headers)
 	}
+	return strconv.Itoa(response.StatusCode), sm.UUID
 }
 
 func (sm *SendgridMail) BuildMail() *mail.SGMailV3 {
@@ -55,7 +57,6 @@ func (sm *SendgridMail) BuildMail() *mail.SGMailV3 {
 	tos := make([]*mail.Email, len(sm.ToMap))
 	idx := 0
 	for name, email := range sm.ToMap {
-		fmt.Println("Appending : ", name)
 		tos[idx] = mail.NewEmail(name, email)
 		idx++
 	}
@@ -63,9 +64,7 @@ func (sm *SendgridMail) BuildMail() *mail.SGMailV3 {
 
 	// p.Subject = "Hello World from the Personalized SendGrid Go Library"
 
-	uuid := uuid.New()
-	p.SetCustomArg("clicrdvid", uuid.String())
-	p.SetHeader("X-UNIQUE-ID", uuid.String())
+	p.SetCustomArg("clicrdvid", sm.UUID)
 	m.AddPersonalizations(p)
 	m.AddCategories("MS-MAIL")
 
