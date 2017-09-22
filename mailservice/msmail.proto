@@ -1,0 +1,29 @@
+// GRPC description for ms mail
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "clicrdv.io.mailservice";
+option java_outer_classname = "ClicRdvMailServiceProto";
+
+package mailservice;
+
+service ClicRdvMailService {
+  rpc SendMail(ClicRdvMail) returns (SendMailStatus) {}
+}
+
+message ClicRdvMail {
+  string fromName = 1;
+  string fromEmail = 2;
+  string replyToName = 3;
+  string replyToEmail = 4;
+  string htmlContent = 5;
+  string textContent = 6;
+  string subject = 7;
+  map<string, string> toMap = 8;
+}
+
+message SendMailStatus {
+  string status = 1;
+  string uniqueId = 2;
+}
