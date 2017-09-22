@@ -64,8 +64,10 @@ func (sm *SendgridMail) BuildMail() *mail.SGMailV3 {
 	// p.Subject = "Hello World from the Personalized SendGrid Go Library"
 
 	uuid := uuid.New()
-	p.SetCustomArg("unique_id", uuid.String())
+	p.SetCustomArg("clicrdvid", uuid.String())
+	p.SetHeader("X-UNIQUE-ID", uuid.String())
 	m.AddPersonalizations(p)
+	m.AddCategories("MS-MAIL")
 
 	c := mail.NewContent("text/plain", sm.TextContent)
 	m.AddContent(c)
