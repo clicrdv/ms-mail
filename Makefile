@@ -1,4 +1,5 @@
 BINARY=ms-mail
+VERSION:=0.1.0
 
 .PHONY: all
 .DEFAULT_GOAL := all
@@ -15,8 +16,11 @@ ruby-stub:
 get:
 	go get
 
+docker:
+	docker build -t clicrdv/${BINARY}:${VERSION} .
+
 binary:
 	go build -o ${BINARY}-osx main.go
 	env GOOS=linux GOARCH=amd64 go build -o ${BINARY}-linux main.go
 
-all: get test go-stub ruby-stub binary
+all: get test go-stub ruby-stub binary docker
