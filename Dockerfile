@@ -5,4 +5,4 @@ WORKDIR /go/src/ms-mail
 EXPOSE 50052
 RUN make get
 RUN make binary
-CMD ["kayak"]
+CMD ["ms-mail"]
