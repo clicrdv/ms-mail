@@ -1,7 +1,7 @@
 package mail
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"strconv"
 
@@ -39,11 +39,8 @@ func (sm *SendgridMail) SendMail() (string, string) {
 	request.Body = Body
 	response, err := sendgrid.API(request)
 	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(response.StatusCode)
-		fmt.Println(response.Body)
-		fmt.Println(response.Headers)
+		log.Println("Error while posting mail to sendgrid API :")
+		log.Println(err.Error())
 	}
 	return strconv.Itoa(response.StatusCode), sm.UUID
 }

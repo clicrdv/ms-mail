@@ -1,5 +1,5 @@
 BINARY=ms-mail
-VERSION:=0.1.1
+VERSION:=0.1.3
 
 .PHONY: all
 .DEFAULT_GOAL := all
