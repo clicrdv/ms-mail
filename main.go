@@ -35,8 +35,8 @@ func (s *server) SendMail(ctxt context.Context, mailToSend *pb.ClicRdvMail) (*pb
 }
 
 func main() {
-	log.Print("Starting microservice grpc listening on 50052")
-	lis, err := net.Listen("tcp", "localhost:50052")
+	log.Print("Starting microservice grpc listening on 3008")
+	lis, err := net.Listen("tcp", "0.0.0.0:3008")
 	if err != nil {
 		log.Fatalf("Failed to listen : %v", err)
 	}
