@@ -9,8 +9,8 @@ import (
 
 	"google.golang.org/grpc"
 
+	pb "github.com/clicrdv/ms-grpc-stubs/mailservice"
 	"github.com/clicrdv/ms-mail/mail"
-	pb "github.com/clicrdv/ms-mail/mailservice"
 )
 
 type server struct{}
