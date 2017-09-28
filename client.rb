@@ -17,9 +17,10 @@ def main
       htmlContent: "<html><body><h1>This is a mail title </h1><b>This is bold content </b></i> This is italitc content</i></body></html>",
       textContent: "this is a text content",
       subject: "MS Mail subject",
+      groupId: "987654321",
       toMap: {
-        "pipo" => "pipo@yopmail.com",
-        "molo" => "molo@yopmail.com"
+        "Mikrob pro" => "mikrob@clicrdv.com",
+	"Mikrob perso" => "mikrob@clicrdv.com"
       }
     )
   )
