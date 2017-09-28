@@ -31,33 +31,46 @@ func (s *server) SendMail(ctxt context.Context, mailToSend *pb.ClicRdvMail) (*pb
 		Subject:      mailToSend.GetSubject(),
 		ToMap:        mailToSend.GetToMap(),
 		UUID:         uuid.New().String(),
+		GroupID:      mailToSend.GetGroupId(),
 	}
 	status, uuid := sm.SendMail()
 	log.Print("Finished grpc processing of mail with uuid:", sm.UUID)
-
-	conn, err := grpc.Dial(os.Getenv("FOLLOW_MAIL_ADDRESS"), grpc.WithInsecure())
+	followMailAddress := os.Getenv("FOLLOW_MAIL_ADDRESS")
+	log.Println("Follow mail address service : ", followMailAddress)
+	conn, err := grpc.Dial(followMailAddress, grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		log.Println("did not connect: %v", err)
 	}
 	defer conn.Close()
+
 	emails := []string{}
 	for _, value := range sm.ToMap {
 		emails = append(emails, value)
 	}
 	emailsStr := strings.Join(emails, ",")
+
+	var eventStr string
+	if status == "200" || status == "202" {
+		eventStr = "SENT"
+	} else {
+		eventStr = "DROPPED"
+	}
+
 	clicRdvFollowMail := followpb.ClicRdvFollowMail{
 		Email:   emailsStr,
-		Event:   "SENT",
-		GroupId: "12345",
+		Event:   eventStr,
+		GroupId: sm.GroupID,
 		Uuid:    sm.UUID,
 	}
 	followStatusClient := followpb.NewClicRdvFollowMailServiceClient(conn)
 	sendMailStatus, err := followStatusClient.NotifySentMail(context.TODO(), &clicRdvFollowMail)
 	if err != nil {
-		log.Fatal("Error while sending mail status to follow mail service : ", err.Error())
-		log.Fatal("Status : ", sendMailStatus)
+		log.Println("Error while sending mail status to follow mail service : ", err.Error())
+		if sendMailStatus != nil {
+			log.Println("Status : ", sendMailStatus.Status)
+		}
 	}
-	return &pb.SendMailStatus{Status: status, UniqueId: uuid}, nil
+	return &pb.SendMailStatus{Status: status, UniqueId: uuid}, err
 }
 
 func main() {

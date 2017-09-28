@@ -19,15 +19,17 @@ type SendgridMail struct {
 	HtmlContent  string
 	TextContent  string
 	UUID         string
+	GroupID      string
 }
 
-func (sm *SendgridMail) NewMail(subject string, fromName string, fromEmail string, toMap map[string]string, htmlContent string, textContent string) {
+func (sm *SendgridMail) NewMail(subject string, fromName string, fromEmail string, toMap map[string]string, htmlContent string, textContent string, groupId string) {
 	sm.FromName = fromName
 	sm.FromEmail = fromEmail
 	sm.ToMap = toMap
 	sm.HtmlContent = htmlContent
 	sm.TextContent = textContent
 	sm.Subject = subject
+	sm.GroupID = groupId
 }
 
 func (sm *SendgridMail) SendMail() (string, string) {
