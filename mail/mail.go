@@ -67,6 +67,7 @@ func (sm *SendgridMail) BuildMail() *mail.SGMailV3 {
 	// p.Subject = "Hello World from the Personalized SendGrid Go Library"
 
 	p.SetCustomArg("clicrdvid", sm.UUID)
+	p.SetCustomArg("groupid", sm.GroupID)
 	m.AddPersonalizations(p)
 	m.AddCategories("MS-MAIL")
 
